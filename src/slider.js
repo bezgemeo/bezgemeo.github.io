@@ -1,15 +1,29 @@
 export class Slider {
-    constructor(sliderWrapperClass, sliderItemsClass) {
-        this.slider = document.querySelector(sliderWrapperClass);
+    constructor(sliderClass, sliderItemsClass, settings) {
+        this.settings = {...settings};
+        this.slider = document.querySelector(sliderClass);
         this.slides = this.slider.querySelectorAll(sliderItemsClass);
+        this.innerWrapper = this.slider.querySelector('.slider-wrapper');
         this.init();
     }
 
     init() {
+        console.log(this.settings);
         this.setInitialSlide();
+        this.addClonedSlides();
         this.addArrows();
         this.addDots();
         this.setInitialDot();
+        this.settings.autoplay && this.runSliderAutoplay();
+        this.initializeStyles();
+    }
+
+    addClonedSlides() {
+        this.slides.forEach((el) => {
+            const clone = el.cloneNode(true);
+            clone.classList.add('slider-item-cloned');
+            this.innerWrapper.appendChild(clone);
+        });
     }
 
     setInitialSlide() {
@@ -26,7 +40,6 @@ export class Slider {
         });
         return this.index;
     }
-
 
     setInitialDot() {
         this.dotsList = this.dotsWrapper.querySelectorAll('.slider-dots-item');
@@ -51,12 +64,14 @@ export class Slider {
     addButtonsListener() {
         this.previousButton.addEventListener('click', ev => {
             this.changeSlide(this.getActiveSlide() - 1);
-            this.changeCurrentDot(this.getActiveSlide());
+            clearInterval(this.setInterval);
+            this.settings.autoplay && this.runSliderAutoplay();
         });
 
         this.nextButton.addEventListener('click', ev => {
             this.changeSlide(this.getActiveSlide() + 1);
-            this.changeCurrentDot(this.getActiveSlide());
+            clearInterval(this.setInterval);
+            this.settings.autoplay && this.runSliderAutoplay();
         });
 
     }
@@ -83,6 +98,8 @@ export class Slider {
             dot.addEventListener('click', () => {
                 this.changeSlide(i);
                 this.changeCurrentDot(i);
+                clearInterval(this.setInterval);
+                this.settings.autoplay && this.runSliderAutoplay();
             });
         });
     }
@@ -91,23 +108,43 @@ export class Slider {
         if (i > this.slides.length - 1) {
             this.slides.forEach(el => el.classList.remove('active'));
             this.slides[0].classList.add('active');
+            this.changeCurrentDot(0);
+            this.moveSlide(0);
         } else if (i < 0) {
             this.slides.forEach(el => el.classList.remove('active'));
             this.slides[this.slides.length - 1].classList.add('active');
+            this.changeCurrentDot(this.slides.length - 1);
+            this.moveSlide(this.slides.length - 1);
         } else {
             this.slides.forEach(el => el.classList.remove('active'));
             this.slides[i].classList.add('active');
+            this.changeCurrentDot(i);
+            this.moveSlide(i);
         }
     }
-
 
     changeCurrentDot(i) {
         this.dotsList.forEach((el, i) => {
             el.classList.remove('current');
-            console.log(el);
         });
 
         this.dotsList[i].classList.add('current');
+    }
+
+    runSliderAutoplay() {
+        this.setInterval = setInterval(
+            () => this.changeSlide(this.getActiveSlide() + 1),
+            this.settings.interval * 1000);
+    }
+
+    initializeStyles() {
+        this.sliderWidth = this.slides.length * this.slider.clientWidth;
+        this.innerWrapper.style.width = `${this.sliderWidth}px`;
+        this.innerWrapper.style.transform = 'translateX(0)';
+    }
+
+    moveSlide(slideNumber) {
+        this.innerWrapper.style.transform = `translateX(${this.innerWrapper.clientWidth / this.slides.length * slideNumber * -1}px)`;
     }
 
 }

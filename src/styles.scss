@@ -19,26 +19,37 @@ button {
   outline: none;
 }
 
+.container {
+  margin: 0 auto;
+  max-width: 1400px;
+  padding: 0 20px 0;
+}
+
 .slider {
   box-sizing: border-box;
   position: relative;
-  padding: 50px;
+  overflow: hidden;
+
+  &-wrapper {
+    display: flex;
+    justify-content: stretch;
+    transition: transform .3s;
+  }
 
   &-item {
     height: 200px;
+    width: 100%;
     margin: 10px;
     padding: 20px;
     border-radius: 8px;
     background-color: peachpuff;
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
 
     &.active{
       display: flex;
     }
-
-
   }
 
   &-dots {
@@ -120,7 +131,7 @@ button {
     }
 
     &-previous {
-      left: 10px;
+      left: 20px;
 
       &::before {
         left: 45%;
@@ -133,7 +144,7 @@ button {
     }
 
     &-next {
-      right: 10px;
+      right: 20px;
 
       &::before {
         left: 55%;

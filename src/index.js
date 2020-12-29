@@ -16,5 +16,12 @@ import './styles.scss';
 
 // document.body.appendChild(component());
 
-new Slider('.slider', '.slider-item');
+new Slider(
+    '.slider',
+    '.slider-item',
+    {
+        autoplay: false,
+        interval: 2,
+        slidesToShow: 1,
+    });
 
