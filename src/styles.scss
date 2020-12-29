@@ -8,6 +8,17 @@ body {
   font-family: Helvetica, Roboto, sans-serif;
 }
 
+h1 {
+  text-align: center;
+  padding: 30px;
+  text-transform: uppercase;
+}
+
+button {
+  border: none;
+  outline: none;
+}
+
 .slider {
   box-sizing: border-box;
   position: relative;
@@ -19,9 +30,15 @@ body {
     padding: 20px;
     border-radius: 8px;
     background-color: peachpuff;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
+
+    &.active{
+      display: flex;
+    }
+
+
   }
 
   &-dots {

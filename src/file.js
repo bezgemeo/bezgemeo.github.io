@@ -1,5 +1,11 @@
 import html from './file.html';
 
-// console.log('here')
+const section = () => {
+    const main = document.createElement('main');
+    main.innerHTML = html;
 
-document.write(html);
+    return main;
+}
+
+document.body.appendChild(section());
+
