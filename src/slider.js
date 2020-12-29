@@ -6,25 +6,18 @@ export class Slider {
     }
 
     init() {
-        console.log(this);
-        this.setActiveSlide();
+        this.setInitialSlide();
         this.addArrows();
         this.addDots();
+        this.setInitialDot();
     }
 
-    // todo: changeSlide() and setActiveSlide() duplicate some actions, needs improvement
-
-    setActiveSlide(i) {
-        if (typeof i === 'undefined') {
-            this.slides.forEach(el => el.classList.remove('active'));
-            this.slides[0].classList.add('active');
-        } else {
-            this.slides.forEach(el => el.classList.remove('active'));
-            this.slides[i].classList.add('active');
-        }
+    setInitialSlide() {
+        this.slides.forEach(el => el.classList.remove('active'));
+        this.slides[0].classList.add('active');
     }
 
-    getActiveSlide(){
+    getActiveSlide() {
         this.index = 0;
         this.slides.forEach((el, i) => {
             if (el.classList.contains('active')) {
@@ -32,6 +25,12 @@ export class Slider {
             }
         });
         return this.index;
+    }
+
+
+    setInitialDot() {
+        this.dotsList = this.dotsWrapper.querySelectorAll('.slider-dots-item');
+        this.dotsList[0].classList.add('current');
     }
 
     addArrows() {
@@ -51,15 +50,13 @@ export class Slider {
 
     addButtonsListener() {
         this.previousButton.addEventListener('click', ev => {
-            console.log(ev.target);
-            console.log('prev', this.getActiveSlide());
-            this.setActiveSlide(this.getActiveSlide() - 1);
+            this.changeSlide(this.getActiveSlide() - 1);
+            this.changeCurrentDot(this.getActiveSlide());
         });
 
         this.nextButton.addEventListener('click', ev => {
-            console.log(ev.target);
-            console.log('next', this.getActiveSlide());
-            this.setActiveSlide(this.getActiveSlide() + 1);
+            this.changeSlide(this.getActiveSlide() + 1);
+            this.changeCurrentDot(this.getActiveSlide());
         });
 
     }
@@ -82,24 +79,35 @@ export class Slider {
     addDotsListener() {
         this.dotsList = this.dotsWrapper.childNodes;
 
-        this.dotsList.forEach((dot, idx) => {
-            dot.addEventListener('click', ev => {
-                this.changeSlide();
+        this.dotsList.forEach((dot, i) => {
+            dot.addEventListener('click', () => {
+                this.changeSlide(i);
+                this.changeCurrentDot(i);
             });
-        })
+        });
     }
 
-    changeSlide () {
-        let el = this.getActiveSlide();
-
-        if (el > this.slides.length) {
-            this.setActiveSlide(this.getActiveSlide(this.slides.length));
+    changeSlide(i) {
+        if (i > this.slides.length - 1) {
+            this.slides.forEach(el => el.classList.remove('active'));
+            this.slides[0].classList.add('active');
+        } else if (i < 0) {
+            this.slides.forEach(el => el.classList.remove('active'));
+            this.slides[this.slides.length - 1].classList.add('active');
+        } else {
+            this.slides.forEach(el => el.classList.remove('active'));
+            this.slides[i].classList.add('active');
         }
+    }
 
-        if (el < this.slides.lengh){
-            this.setActiveSlide(this.getActiveSlide() + 1);
-        }
 
+    changeCurrentDot(i) {
+        this.dotsList.forEach((el, i) => {
+            el.classList.remove('current');
+            console.log(el);
+        });
+
+        this.dotsList[i].classList.add('current');
     }
 
 }
