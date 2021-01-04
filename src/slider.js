@@ -2,7 +2,6 @@ export class Slider {
     constructor(sliderClass, sliderItemsClass, settings) {
         this.settings = {...settings};
         this.slider = document.querySelector(sliderClass);
-        this.slides = this.slider.querySelectorAll(sliderItemsClass);
         this.innerWrapper = this.slider.querySelector('.slider-wrapper');
         this.slideClass = sliderItemsClass;
         this.init();
@@ -10,7 +9,11 @@ export class Slider {
 
     init() {
         console.log(this.settings);
-        // this.addClonedSlides();
+        this.slides = this.slider.querySelectorAll(this.slideClass);
+        console.log('on init', this.slides);
+        this.addClonedSlides();
+        this.slides = this.slider.querySelectorAll(this.slideClass);
+        console.log('after cloning', this.slides);
         this.setInitialSlide();
         this.addArrows();
         this.addDots();
@@ -21,7 +24,7 @@ export class Slider {
 
     addClonedSlides() {
         const clonedElementsArray = [];
-        this.slides.forEach((originalElement, index) => {
+        this.slides.forEach((originalElement) => {
             const clone = originalElement.cloneNode(true);
             clone.classList.add('slider-item-cloned');
             clonedElementsArray.push(clone);
@@ -29,15 +32,13 @@ export class Slider {
 
         clonedElementsArray.forEach((item, index) => {
             if (index < clonedElementsArray.length / 2) {
-                console.log('index <= clonedElementsArray.length', index);
+                console.log('index < clonedElementsArray.length', index);
                 this.innerWrapper.appendChild(item);
             } else {
                 console.log('index > clonedElementsArray.length', index);
                 this.innerWrapper.insertBefore(item, this.slides[0]);
             }
-        })
-
-        this.updatedSlides = this.slider.querySelectorAll(this.slideClass);
+        });
     }
 
     setInitialSlide() {
