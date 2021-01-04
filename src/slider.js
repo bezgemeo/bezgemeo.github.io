@@ -4,13 +4,14 @@ export class Slider {
         this.slider = document.querySelector(sliderClass);
         this.slides = this.slider.querySelectorAll(sliderItemsClass);
         this.innerWrapper = this.slider.querySelector('.slider-wrapper');
+        this.slideClass = sliderItemsClass;
         this.init();
     }
 
     init() {
         console.log(this.settings);
-        this.setInitialSlide();
         // this.addClonedSlides();
+        this.setInitialSlide();
         this.addArrows();
         this.addDots();
         this.setInitialDot();
@@ -19,11 +20,24 @@ export class Slider {
     }
 
     addClonedSlides() {
-        this.slides.forEach((el) => {
-            const clone = el.cloneNode(true);
+        const clonedElementsArray = [];
+        this.slides.forEach((originalElement, index) => {
+            const clone = originalElement.cloneNode(true);
             clone.classList.add('slider-item-cloned');
-            this.innerWrapper.appendChild(clone);
+            clonedElementsArray.push(clone);
         });
+
+        clonedElementsArray.forEach((item, index) => {
+            if (index < clonedElementsArray.length / 2) {
+                console.log('index <= clonedElementsArray.length', index);
+                this.innerWrapper.appendChild(item);
+            } else {
+                console.log('index > clonedElementsArray.length', index);
+                this.innerWrapper.insertBefore(item, this.slides[0]);
+            }
+        })
+
+        this.updatedSlides = this.slider.querySelectorAll(this.slideClass);
     }
 
     setInitialSlide() {
@@ -33,9 +47,9 @@ export class Slider {
 
     getActiveSlide() {
         this.index = 0;
-        this.slides.forEach((el, i) => {
+        this.slides.forEach((el, index) => {
             if (el.classList.contains('active')) {
-                this.index = i;
+                this.index = index;
             }
         });
         return this.index;
@@ -62,13 +76,13 @@ export class Slider {
     }
 
     addButtonsListener() {
-        this.previousButton.addEventListener('click', ev => {
+        this.previousButton.addEventListener('click', _ => {
             this.changeSlide(this.getActiveSlide() - 1);
             clearInterval(this.setInterval);
             this.settings.autoplay && this.runSliderAutoplay();
         });
 
-        this.nextButton.addEventListener('click', ev => {
+        this.nextButton.addEventListener('click', _ => {
             this.changeSlide(this.getActiveSlide() + 1);
             clearInterval(this.setInterval);
             this.settings.autoplay && this.runSliderAutoplay();
@@ -104,32 +118,32 @@ export class Slider {
         });
     }
 
-    changeSlide(i) {
+    changeSlide(index) {
         const activeClass = 'active';
-        if (i > this.slides.length - 1) {
+        if (index > this.slides.length - 1) {
             this.slides.forEach(el => el.classList.remove(activeClass));
             this.slides[0].classList.add(activeClass);
             this.changeCurrentDot(0);
-            this.moveSlide(0);
-        } else if (i < 0) {
+            this.moveSlideTo(0);
+        } else if (index < 0) {
             this.slides.forEach(el => el.classList.remove(activeClass));
             this.slides[this.slides.length - 1].classList.add(activeClass);
             this.changeCurrentDot(this.slides.length - 1);
-            this.moveSlide(this.slides.length - 1);
+            this.moveSlideTo(this.slides.length - 1);
         } else {
             this.slides.forEach(el => el.classList.remove(activeClass));
-            this.slides[i].classList.add(activeClass);
-            this.changeCurrentDot(i);
-            this.moveSlide(i);
+            this.slides[index].classList.add(activeClass);
+            this.changeCurrentDot(index);
+            this.moveSlideTo(index);
         }
     }
 
-    changeCurrentDot(i) {
-        this.dotsList.forEach((el, i) => {
+    changeCurrentDot(dotIndex) {
+        this.dotsList.forEach((el) => {
             el.classList.remove('current');
         });
 
-        this.dotsList[i].classList.add('current');
+        this.dotsList[dotIndex].classList.add('current');
     }
 
     runSliderAutoplay() {
@@ -144,7 +158,7 @@ export class Slider {
         this.innerWrapper.style.transform = 'translateX(0)';
     }
 
-    moveSlide(slideNumber) {
+    moveSlideTo(slideNumber) {
         const afterAnimation = () => {
             this.innerWrapper.classList.remove('scrolling');
         }
@@ -154,5 +168,4 @@ export class Slider {
         this.innerWrapper.classList.add('scrolling');
         this.innerWrapper.style.transform = `translateX(${this.innerWrapper.clientWidth / this.slides.length * slideNumber * -1}px)`;
     }
-
 }
