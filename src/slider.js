@@ -10,7 +10,7 @@ export class Slider {
     init() {
         console.log(this.settings);
         this.setInitialSlide();
-        this.addClonedSlides();
+        // this.addClonedSlides();
         this.addArrows();
         this.addDots();
         this.setInitialDot();
@@ -105,19 +105,20 @@ export class Slider {
     }
 
     changeSlide(i) {
+        const activeClass = 'active';
         if (i > this.slides.length - 1) {
-            this.slides.forEach(el => el.classList.remove('active'));
-            this.slides[0].classList.add('active');
+            this.slides.forEach(el => el.classList.remove(activeClass));
+            this.slides[0].classList.add(activeClass);
             this.changeCurrentDot(0);
             this.moveSlide(0);
         } else if (i < 0) {
-            this.slides.forEach(el => el.classList.remove('active'));
-            this.slides[this.slides.length - 1].classList.add('active');
+            this.slides.forEach(el => el.classList.remove(activeClass));
+            this.slides[this.slides.length - 1].classList.add(activeClass);
             this.changeCurrentDot(this.slides.length - 1);
             this.moveSlide(this.slides.length - 1);
         } else {
-            this.slides.forEach(el => el.classList.remove('active'));
-            this.slides[i].classList.add('active');
+            this.slides.forEach(el => el.classList.remove(activeClass));
+            this.slides[i].classList.add(activeClass);
             this.changeCurrentDot(i);
             this.moveSlide(i);
         }
@@ -144,6 +145,13 @@ export class Slider {
     }
 
     moveSlide(slideNumber) {
+        const afterAnimation = () => {
+            this.innerWrapper.classList.remove('scrolling');
+        }
+        this.innerWrapper.removeEventListener('transitionend', afterAnimation());
+        this.innerWrapper.addEventListener('transitionend', afterAnimation());
+
+        this.innerWrapper.classList.add('scrolling');
         this.innerWrapper.style.transform = `translateX(${this.innerWrapper.clientWidth / this.slides.length * slideNumber * -1}px)`;
     }
 

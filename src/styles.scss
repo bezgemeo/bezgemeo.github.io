@@ -33,7 +33,10 @@ button {
   &-wrapper {
     display: flex;
     justify-content: stretch;
-    transition: transform .3s;
+
+    &.scrolling {
+      transition: transform .3s;
+    }
   }
 
   &-item {
@@ -47,7 +50,7 @@ button {
     align-items: center;
     justify-content: center;
 
-    &.active{
+    &.active {
       display: flex;
     }
   }
@@ -114,7 +117,7 @@ button {
       transition: background-color .3s, transform cubic-bezier(0.49, 0.02, 0.52, 0.96) .3s;
       cursor: pointer;
 
-      &:hover{
+      &:hover {
         background-color: rgba(gray, .5);
         transform: scale(1.2);
       }
